@@ -8,9 +8,20 @@ from .models import *
 from .forms import *
 
 
-def home_view(request):
-    posts = Post.objects.all()
-    context = {'posts': posts}
+def home_view(request, tag=None):
+    if tag:
+        posts = Post.objects.filter(tags__slug=tag)
+        tag = get_object_or_404(Tag, slug=tag)
+    else:
+        posts = Post.objects.all()
+
+    categories = Tag.objects.all()
+    
+    context = {
+        "posts": posts,
+        "categories": categories,
+        'tag': tag,
+        }
     return render(request, 'a_posts/home.html', context)
 
 
@@ -21,7 +32,7 @@ def find_image(sourcecode):
 def find_title(sourcecode):
     find_title = sourcecode.select('h1.photo-title')
     return find_title[0].text.strip()
-    
+
 def find_artist(sourcecode):
     find_artist = sourcecode.select("a.owner-name")
     return find_artist[0].text.strip()
@@ -49,6 +60,7 @@ def post_create_view(request):
             post.artist = find_artist(sourcecode)
 
             post.save()
+            form.save_m2m()
             return redirect('a_posts:home')
         return render(request, 'a_posts/post_create.html', {'form': form})
 
