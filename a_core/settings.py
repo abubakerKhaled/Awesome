@@ -44,9 +44,11 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "django_cleanup.apps.CleanupConfig",
     
     # My apps
     "a_posts",
+    "a_users",
 ]
 
 MIDDLEWARE = [
