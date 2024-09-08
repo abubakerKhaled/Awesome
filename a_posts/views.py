@@ -58,6 +58,9 @@ def post_create_view(request):
 
             ## Find the artist
             post.artist = find_artist(sourcecode)
+            
+            ## Assign the author
+            post.author = request.user
 
             post.save()
             form.save_m2m()
@@ -66,9 +69,13 @@ def post_create_view(request):
 
 
 def post_delete_view(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
     if request.method == 'GET': 
-        post = get_object_or_404(Post, id=post_id)
-        context = {'post': post}
+        if request.user == post.author:
+            context = {'post': post}
+        else:
+            messages.error(request, "You are not authorized to delete this post.")
+            return redirect(reverse_lazy("a_posts:home"))
         return render(request, 'a_posts/post_delete.html', context)
     else:
         post = get_object_or_404(Post, id=post_id)
@@ -79,8 +86,12 @@ def post_delete_view(request, post_id):
 def post_edit_view(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if request.method == 'GET':
-        form = PostEditForm(instance=post)
-        context = {'post': post, 'form': form}
+        if request.user == post.author:
+            form = PostEditForm(instance=post)
+            context = {'post': post, 'form': form}
+        else:
+            messages.error(request, 'You are not authorized to edit this post.')
+            return redirect(reverse_lazy("a_posts:home"))
     else:
         form = PostEditForm(request.POST, instance=post)
         if form.is_valid():

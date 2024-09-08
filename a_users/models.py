@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.templatetags.static import static
 from django.utils import timezone
 import os
-import datetime
 
 def get_profile_image_path(instance, filename):
     # Ensures unique filenames based on the primary key
@@ -29,3 +29,19 @@ class Profile(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+    @property
+    def avatar(self):
+        try:
+            avatar = self.image.url
+        except:
+            avatar = static("images/avatar_default.svg")
+        return avatar
+
+    @property
+    def name(self):
+        if self.realname:
+            name = self.realname
+        else:
+            name = self.user.username
+        return name

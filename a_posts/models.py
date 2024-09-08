@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import uuid
 
 class Tag(models.Model):
@@ -16,6 +17,7 @@ class Post(models.Model):
     title = models.CharField(max_length=500)
     artist = models.CharField(max_length=500, null=True)
     url = models.URLField(max_length=500, null=True)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='posts')
     image = models.URLField(max_length=500)
     body = models.TextField()
     tags = models.ManyToManyField(Tag, related_name='posts')

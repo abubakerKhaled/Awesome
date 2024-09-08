@@ -25,11 +25,9 @@
             <li x-data="{ dropdownOpen: false }" class="relative">
                 <a @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="cursor-pointer select-none">
                     {% if user.is_authenticated %}
-                    <img class="h-8 w-8 rounded-full object-cover" src="{{ user.profile.image.url }}"/>
-                    {% else %}
-                    <img class="h-8 w-8 rounded-full object-cover" src="https://pbs.twimg.com/profile_images/508601156767997952/fFTdKUf2_400x400.jpeg"/>
+                    <img class="h-8 w-8 rounded-full object-cover" src="{{ user.profile.avatar }}"/>
+                    {{ user.profile.name }}
                     {% endif %}
-                    {{ user.username }}
                     <img x-bind:class="dropdownOpen && 'rotate-180 duration-300'" class="w-4" src="https://img.icons8.com/small/32/777777/expand-arrow.png"/>
                 </a>
                 <div x-show="dropdownOpen" x-cloak class="absolute right-0 bg-white text-black shadow rounded-lg w-40 p-2 z-20"
