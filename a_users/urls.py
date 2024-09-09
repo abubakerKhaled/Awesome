@@ -12,4 +12,5 @@ urlpatterns = [
     path("profile/edit/", profile_edit_view, name="profile_edit"),
     # Delete profile
     path("profile/delete/", profile_delete_view, name="profile_delete"),
+    path("profile_onboarding/", profile_onboarding, name="profile_onboarding"),
 ]

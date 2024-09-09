@@ -31,7 +31,7 @@ def profile_edit_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully.")
-            return redirect("a_users:profile", username=request.user.username)
+            return redirect("a_users:user_profile", username=request.user.username)
     else:
         form = ProfileForm(instance=profile)
 
@@ -52,3 +52,22 @@ def profile_delete_view(request):
         return redirect("a_posts:home")
 
     return render(request, "a_users/profile_delete.html")
+
+
+@login_required
+def profile_onboarding(request):
+    profile = request.user.profile
+
+    if request.method == "POST":
+        form = ProfileForm(
+            request.POST, request.FILES, instance=profile
+        )  # Handle file uploads (like profile images)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect("a_posts:home")
+    else:
+        form = ProfileForm(instance=profile)
+
+    context = {"form": form}
+    return render(request, "a_users/profile_onboarding.html", context)
