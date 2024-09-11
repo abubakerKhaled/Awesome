@@ -32,8 +32,8 @@ class Post(models.Model):
     
     class Meta:
         ordering = ['-created']
-        
-        
+
+
 class LikedPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -46,6 +46,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='comments')
     parent_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     body = models.TextField()
+    likes = models.ManyToManyField(User, related_name='Likedcomments', through='LikedComment')
     created_at = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, primary_key=True, editable=False
@@ -58,12 +59,25 @@ class Comment(models.Model):
             return f'no author : {self.body[:30]}'
     class Meta:
         ordering = ['-created_at']
-        
-        
+
+
+class LikedComment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} likes {self.comment.body[:30]}'
+
+
 class Reply(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='replies')
     parent_comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
     body = models.TextField()
+    likes = models.ManyToManyField(
+        User, related_name="Likedreplies", through="LikedReply"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, primary_key=True, editable=False
@@ -76,3 +90,11 @@ class Reply(models.Model):
             return f'no author : {self.body[:30]}'
     class Meta:
         ordering = ['created_at']
+
+class LikedReply(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reply = models.ForeignKey(Reply, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'{self.user.username} likes {self.reply.body[:30]}'

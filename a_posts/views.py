@@ -176,18 +176,49 @@ def reply_delete_view(request, id):
     }
     return render(request, "a_posts/reply_delete.html", context)
 
-@login_required
-def like_post(request, id):
-    post = get_object_or_404(Post, id=id)
-    user_exists = post.likes.filter(username=request.user.username).exists()
 
-    if post.author != request.user:
-        if user_exists:
-            post.likes.remove(request.user)
-            messages.success(request, "Unliked post.")
-        else:
-            post.likes.add(request.user)
-            messages.success(request, "Liked post.")
-    context = {'post': post}    
-    return render(request, 'snippets/likes.html', context)
-    
+def like_toggle(model_cls):
+    def innerfunc(func):
+        def wrapper(request, *args, **kwargs):
+            # Get the model instance using the id from kwargs
+            model_instance = get_object_or_404(model_cls, id=kwargs.get("id"))
+            user_exists = model_instance.likes.filter(
+                username=request.user.username
+            ).exists()
+
+            # Ensure that the author can't like their own content
+            if model_instance.author != request.user:
+                if user_exists:
+                    model_instance.likes.remove(request.user)
+                    messages.success(request, "Unliked")
+                else:
+                    model_instance.likes.add(request.user)
+                    messages.success(request, "Liked post.")
+
+            # Call the decorated function without passing kwargs
+            return func(request, model_instance, *args)  # Exclude kwargs
+
+        return wrapper
+
+    return innerfunc
+
+
+@login_required
+@like_toggle(Post)
+def like_post(request, model_instance):
+    context = {"post": model_instance}
+    return render(request, "snippets/likes.html", context)
+
+
+@login_required
+@like_toggle(Comment)
+def like_comment(request, model_instance):
+    context = {"comment": model_instance}
+    return render(request, "snippets/likes_comment.html", context)
+
+
+@login_required
+@like_toggle(Reply)
+def like_reply(request, model_instance):
+    context = {"reply": model_instance}
+    return render(request, "snippets/likes_reply.html", context)
