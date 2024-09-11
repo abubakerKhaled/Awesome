@@ -17,6 +17,8 @@ urlpatterns = [
     path("post/edit/<uuid:post_id>/", post_edit_view, name="edit_post"),
     ## Post page view
     path("post/<uuid:post_id>/", post_page_view, name="post"),
+    ## Like a post
+    path("post/<uuid:id>/like/", like_post, name="like_post"),
     ## Sent Comment
     path("comment/sent/<uuid:id>/", comment_sent, name="comment_sent"),
     ## Delete Comment

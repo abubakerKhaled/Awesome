@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from bs4 import BeautifulSoup
@@ -174,3 +175,19 @@ def reply_delete_view(request, id):
         "reply": reply,
     }
     return render(request, "a_posts/reply_delete.html", context)
+
+@login_required
+def like_post(request, id):
+    post = get_object_or_404(Post, id=id)
+    user_exists = post.likes.filter(username=request.user.username).exists()
+
+    if post.author != request.user:
+        if user_exists:
+            post.likes.remove(request.user)
+            messages.success(request, "Unliked post.")
+        else:
+            post.likes.add(request.user)
+            messages.success(request, "Liked post.")
+    context = {'post': post}    
+    return render(request, 'snippets/likes.html', context)
+    

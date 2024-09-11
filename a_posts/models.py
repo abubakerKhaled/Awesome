@@ -20,6 +20,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='posts')
     image = models.URLField(max_length=500)
     body = models.TextField()
+    likes = models.ManyToManyField(User, related_name='likedposts', through='LikedPost')
     tags = models.ManyToManyField(Tag, related_name='posts')
     created = models.DateTimeField(auto_now_add=True)
     id = models.CharField(max_length=100, default=uuid.uuid4, unique=True, primary_key=True, editable=False)
@@ -31,6 +32,15 @@ class Post(models.Model):
     
     class Meta:
         ordering = ['-created']
+        
+        
+class LikedPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'{self.user.username} likes {self.post.title[:30]}'
 
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='comments')
