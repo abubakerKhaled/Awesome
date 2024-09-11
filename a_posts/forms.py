@@ -32,3 +32,36 @@ class PostEditForm(forms.ModelForm):
             ),
             "tags": forms.CheckboxSelectMultiple(),
         }
+
+class CommentCreateForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['body']
+        labels = {
+            'body': ''
+        }
+        widgets = {
+            "body": forms.TextInput(
+                attrs={
+                    "placeholder": "Add Comment...",
+                    "class": "w-full",
+                }
+            ),
+        }
+
+
+class ReplyCreateForm(forms.ModelForm):
+    class Meta:
+        model = Reply
+        fields = ['body']
+        labels = {
+            'body': ''
+        }
+        widgets = {
+            "body": forms.TextInput(
+                attrs={
+                    "placeholder": "Add Reply...",
+                    "class": "!text-sm w-full",
+                }
+            ),
+        }

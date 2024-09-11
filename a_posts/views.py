@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 import requests
 from requests.exceptions import RequestException
 
-from .models import Post, Tag
-from .forms import PostCreateForm, PostEditForm
+from .models import *
+from .forms import *
 
 
 def home_view(request, tag=None):
@@ -109,4 +109,68 @@ def post_edit_view(request, post_id):
 
 def post_page_view(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    return render(request, "a_posts/post_page.html", {"post": post})
+    tags = Tag.objects.all()
+
+    comment_form = CommentCreateForm()
+
+    context = {
+        'form' : comment_form,
+        'post' : post,
+        'tags': tags,
+    }
+
+    return render(request, "a_posts/post_page.html", context)
+
+@login_required
+def comment_sent(request, id):
+    post = get_object_or_404(Post, id=id)
+    if request.method == 'POST':
+        comment_form = CommentCreateForm(request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.parent_post = post
+            new_comment.author = request.user
+            new_comment.save()
+            messages.success(request, "Comment added successfully.")
+            return redirect(reverse("a_posts:post", args=[id]))
+
+
+@login_required
+def comment_delete_view(request, id):
+    comment = get_object_or_404(Comment, id=id, author=request.user)
+    if request.method == "POST":
+        comment.delete()
+        messages.success(request, "Comment deleted successfully.")
+        return redirect(reverse("a_posts:post", args=[comment.parent_post.id]))
+    context = {
+        'post' : comment.parent_post,
+        'comment' : comment,
+    }
+    return render(request, "a_posts/comment_delete.html", context)
+
+@login_required
+def reply_sent(request, id):
+    comment = get_object_or_404(Comment, id=id)
+    if request.method == 'POST':
+        reply_form = ReplyCreateForm(request.POST)
+        if reply_form.is_valid():
+            new_reply = reply_form.save(commit=False)
+            new_reply.parent_comment = comment
+            new_reply.author = request.user
+            new_reply.save()
+            messages.success(request, "Reply added successfully.")
+            return redirect(reverse("a_posts:post", args=[comment.parent_post.id]))
+
+
+@login_required
+def reply_delete_view(request, id):
+    reply = get_object_or_404(Reply, id=id, author=request.user)
+    if request.method == "POST":
+        reply.delete()
+        messages.success(request, "Reply deleted successfully.")
+        return redirect(reverse("a_posts:post", args=[reply.parent_comment.parent_post.id]))
+    context = {
+        "post": reply.parent_comment.parent_post,
+        "reply": reply,
+    }
+    return render(request, "a_posts/reply_delete.html", context)
