@@ -1,0 +1,21 @@
+<fade-in 
+class="opacity-0 block -mt-20 ease-in-out"
+_="on load transition my margin-top to 0 over 0.2 seconds then transition my opacity to 1 over 0.4 seconds" >
+    {% include 'a_posts/reply.html' %}
+</fade-in>
+
+<form class="flex items-center p-4 space-x-2" autocomplete="off" 
+    hx-post="{% url 'a_posts:reply_sent' comment.id %}"
+    hx-target="this"
+    hx-swap="outerHTML"
+    hx-on="htmx:afterRequest: reset()">
+    {% csrf_token %}
+    <div class="flex-grow">
+        {{ form }}
+    </div>
+    <button @click="open = false" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors" type="submit">Submit</button>
+</form>
+
+<span hx-swap-oob="true" id="repliescount{{ comment.id }}" class="font-light text-gray-500 ml-1">
+    {{ comment.replies.count }}
+</span>

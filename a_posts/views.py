@@ -125,6 +125,7 @@ def post_page_view(request, post_id):
 @login_required
 def comment_sent(request, id):
     post = get_object_or_404(Post, id=id)
+    reply_form = ReplyCreateForm()
     if request.method == 'POST':
         comment_form = CommentCreateForm(request.POST)
         if comment_form.is_valid():
@@ -133,7 +134,12 @@ def comment_sent(request, id):
             new_comment.author = request.user
             new_comment.save()
             messages.success(request, "Comment added successfully.")
-            return redirect(reverse("a_posts:post", args=[id]))
+    context = {
+        'comment' : new_comment,
+        'post' : post,
+        'form' : reply_form,
+        }
+    return render(request, 'snippets/add_comment.html', context)
 
 
 @login_required
@@ -152,6 +158,7 @@ def comment_delete_view(request, id):
 @login_required
 def reply_sent(request, id):
     comment = get_object_or_404(Comment, id=id)
+    reply_form = ReplyCreateForm()
     if request.method == 'POST':
         reply_form = ReplyCreateForm(request.POST)
         if reply_form.is_valid():
@@ -160,7 +167,14 @@ def reply_sent(request, id):
             new_reply.author = request.user
             new_reply.save()
             messages.success(request, "Reply added successfully.")
-            return redirect(reverse("a_posts:post", args=[comment.parent_post.id]))
+            reply_form = ReplyCreateForm()  # Reset the form after saving
+
+    context = {
+        'reply' : new_reply,
+        'comment' : comment,
+        'form': reply_form,
+    }
+    return render(request, 'snippets/add_reply.html', context)
 
 
 @login_required

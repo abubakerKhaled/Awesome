@@ -7,13 +7,19 @@
 {% include 'a_posts/post.html' %}
 
 <div class="card !pb-0 -mt-3">
-    <form method="POST" class="flex items-center p-4 space-x-2" action="{% url 'a_posts:comment_sent' post.id %}" autocomplete="off">
+    {% if user.is_authenticated %}
+    <form class="flex items-center p-4 space-x-2" autocomplete="off"
+    hx-post="{% url 'a_posts:comment_sent' post.id %}" 
+    hx-target="#tab-contents"
+    hx-swap="afterbegin"
+    _="on htmx:afterRequest reset() me">
         {% csrf_token %}
         <div class="flex-grow">
             {{ form }}
         </div>
         <button @click="open = false" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors" type="submit">Submit</button>
     </form>
+    {% endif %}
 </div>
 
 {% if post.comments.count %}
