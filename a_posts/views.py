@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.http import HttpResponse
+from django.db.models import Count
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from bs4 import BeautifulSoup
@@ -111,7 +111,20 @@ def post_edit_view(request, post_id):
 def post_page_view(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     tags = Tag.objects.all()
-
+    reply_form = ReplyCreateForm()
+    
+    if request.htmx:
+        if 'top' in request.GET:
+            # comments = post.comments.filter(likes__isnull=False).distinct()
+            comments = post.comments.annotate(num_likes=Count('likes')).filter(num_likes__gt=0).order_by('-num_likes')
+        else:
+            comments = post.comments.all()
+        context = {
+            'comments': comments,
+            'form': reply_form
+        }
+        return render(request, 'snippets/loop_postpage_comments.html', context)
+    
     comment_form = CommentCreateForm()
 
     context = {
