@@ -17,11 +17,8 @@ def home_view(request, tag=None):
     if tag:
         tag = get_object_or_404(Tag, slug=tag)
 
-    categories = Tag.objects.all()  # Consider prefetching if used often
-
     context = {
         "posts": posts,
-        "categories": categories,
         "tag": tag,
     }
     return render(request, "a_posts/home.html", context)
@@ -110,9 +107,9 @@ def post_edit_view(request, post_id):
 
 def post_page_view(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    tags = Tag.objects.all()
-    reply_form = ReplyCreateForm()
     
+    reply_form = ReplyCreateForm()
+
     if request.htmx:
         if 'top' in request.GET:
             # comments = post.comments.filter(likes__isnull=False).distinct()
@@ -120,18 +117,14 @@ def post_page_view(request, post_id):
         else:
             comments = post.comments.all()
         context = {
-            'comments': comments,
-            'form': reply_form
+            'comments' : comments,
+            'form' : reply_form, 
         }
         return render(request, 'snippets/loop_postpage_comments.html', context)
-    
+
     comment_form = CommentCreateForm()
 
-    context = {
-        'form' : comment_form,
-        'post' : post,
-        'tags': tags,
-    }
+    context = {"form": comment_form, "post": post}
 
     return render(request, "a_posts/post_page.html", context)
 
