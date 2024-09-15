@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.db.models import Count
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from bs4 import BeautifulSoup
 import requests
 from requests.exceptions import RequestException
-
+from django.http import HttpResponse
 from .models import *
 from .forms import *
 
@@ -17,9 +18,15 @@ def home_view(request, tag=None):
     if tag:
         tag = get_object_or_404(Tag, slug=tag)
 
+    paginator = Paginator(posts, 3)
+    page = int(request.GET.get('page', 1))
+    posts = paginator.page(page)
+    
+    
     context = {
         "posts": posts,
         "tag": tag,
+        'page': page
     }
     return render(request, "a_posts/home.html", context)
 
