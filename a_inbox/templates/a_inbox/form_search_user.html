@@ -1,0 +1,27 @@
+<h3 class="text-xl font-bold mb-4" id="modal-title">New Message</h3>
+<div>
+    <div class="flex gap-2 items-center">
+        <span class="font-bold">To:</span>
+        <input class="p-3 w-screen lg:full" placeholder="Search user ..." type="text" name="search_user"
+        hx-get="{% url 'a_inbox:search_users' %}"
+        hx-trigger="keyup changed"
+        hx-target="#search-results"
+        hx-swap="innerHTML" >
+    </div>
+    <div id="search-results" class="block h-60 overflow-y-auto">
+        <ul id="user-list" class="mt-2">
+            <li>
+                <a class="flex items-center gap-1 hover:bg-zinc-100 rounded-lg p-2 cursor-pointer">
+                    <img class="w-10 h-10 object-cover rounded-full mr-1" src="/static/images/avatar_default.svg">
+                    <div class="font-bold">Dave <span class="text-xs font-normal text-zinc-500">@Wizzy</span></div>
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-1 hover:bg-zinc-100 rounded-lg p-2 cursor-pointer">
+                    <img class="w-10 h-10 object-cover rounded-full mr-1" src="/static/images/avatar_default.svg">
+                    <div class="font-bold">Dave <span class="text-xs font-normal text-zinc-500">@Spondy</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
