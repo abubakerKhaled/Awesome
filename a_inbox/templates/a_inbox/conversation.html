@@ -14,6 +14,8 @@
         {% endfor %}
     </div>
 
+    {% if conversation %}
+
     <!-- Messages List -->
     <ul id='inbox_messages' class="flex flex-col justify-end grow gap-6 p-4 sm:p-10 pb-0 sm:pb-0">
         {% for message in conversation.messages.all reversed %}
@@ -46,4 +48,11 @@
             <div class="text-white rounded-full">Reply</div>
         </a>
     </div>
+
+    {% else %}
+    <div class="h-full flex items-center justify-center text-gray-500 -mt-6 text-center p-">
+        Select a Conversation or create a new Message
+    </div>
+    {%endif %}
+
 </div>
