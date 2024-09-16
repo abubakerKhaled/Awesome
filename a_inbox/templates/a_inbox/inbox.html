@@ -1,113 +1,131 @@
-{% include 'layouts/d.html' %} {% load static %} {% block content %}
+{% include 'layouts/d.html' %} {% load static %} 
 
-<inbox
-  class="grid grid-cols-5 sm:grid-cols-4 h-[calc(100vh-8rem)] md:h-[calc(100vh-12rem)] shadow-2xl rounded-2xl mx-1 lg:mx-10 xl:mx-48"
->
-  <!-- Sidebar for Conversations and New Message Button -->
-  <div
-    x-data="{ modal_open: false }"
-    class="col-span-1 bg-slate-10 rounded-l-2xl p-2 overflow-y-auto"
-  >
-    <!-- New Message Button -->
-    <div class="p-0 sm:p-4 mb-3 sticky top-0 z-10">
-      <a
-        @click="modal_open = true"
-        class="flex cursor-pointer items-center justify-center h-14 sm:h-16 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full"
-      >
-        <img
-          class="h-6 m-auto lg:m-0"
-          src="https://img.icons8.com/external-anggara-glyph-anggara-putra/32/ffffff/external-edit-user-interface-anggara-glyph-anggara-putra.png"
-        />
-        <div class="hidden lg:block text-white rounded-full font-bold">
-          New Message
+{% block content %}
+
+
+<div class="inbox grid grid-cols-5 sm:grid-cols-4 h-[calc(100vh-8rem)] md:h-[calc(100vh-12rem)] shadow-2xl rounded-2xl mx-1 lg:mx-10 xl:mx-48">
+    <!-- Sidebar -->
+    <div x-data="{ modal_open: false }" class="col-span-1 bg-slate-100 rounded-l-2xl p-2 overflow-y-auto">
+        <!-- New Message Button -->
+        <div class="p-0 sm:p-4 mb-3 sticky top-0 z-10">
+            <a @click="modal_open = true" class="flex cursor-pointer items-center justify-center h-14 sm:h-16 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full">
+                <img class="h-6 m-auto lg:m-0" src="https://img.icons8.com/external-anggara-glyph-anggara-putra/32/ffffff/external-edit-user-interface-anggara-glyph-anggara-putra.png" alt="New Message Icon">
+                <div class="hidden lg:block text-white rounded-full font-bold">New Message</div>
+            </a>
         </div>
-      </a>
-    </div>
 
-    <!-- New Message Modal -->
-    <div
-      x-show="modal_open"
-      x-cloak
-      class="relative z-10"
-      aria-labelledby="modal-title"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-      ></div>
-      <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div
-          class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
-        >
-          <div
-            class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
-          >
-            <div
-              @click.away="modal_open = false"
-              class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4"
-            >
-              <h3 class="text-xl font-bold mb-4" id="modal-title">
-                New Message
-              </h3>
-              <div id="new-message">
-                <!-- Search User Input -->
-                <div class="flex gap-2 items-center">
-                  <span class="font-bold">To:</span>
-                  <input
-                    class="p-3 w-screen lg:full"
-                    placeholder="Search user ..."
-                    type="text"
-                    name="search_user"
-                    hx-get="/inbox/search_users/"
-                    hx-trigger="keyup changed"
-                    hx-target="#search-results"
-                    hx-swap="innerHTML"
-                  />
+        <!-- New Message Modal -->
+        <div x-show="modal_open" x-cloak class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                        <div @click.away="modal_open = false" class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <h3 class="text-xl font-bold mb-4" id="modal-title">New Message</h3>
+                            <div id="new-message">
+                                <div class="flex gap-2 items-center">
+                                    <span class="font-bold">To:</span>
+                                    <input
+                                        class="p-3 w-screen lg:w-full"
+                                        placeholder="Search user ..."
+                                        type="text"
+                                        name="search_user"
+                                        hx-get="/inbox/search_users/"
+                                        hx-trigger="keyup changed"
+                                        hx-target="#search-results"
+                                        hx-swap="innerHTML"
+                                    >
+                                </div>
+                                <div id="search-results" class="block h-60 overflow-y-auto"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Search Results -->
-                <div
-                  id="search-results"
-                  class="block h-60 overflow-y-auto"
-                ></div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+
+        <!-- Conversations List -->
+        <ul id="conversations-list" class="flex flex-col gap-1 divide-y mt-2">
+            <li class="bg-zinc-200 rounded-full sm:rounded-lg relative mt-2 sm:mt-0">
+                <a href="/inbox/c/78ceba27-2053-4cb9-8d74-8a34d1b40f4b/" class="flex items-center justify-center lg:justify-normal gap-1 hover:bg-zinc-200 rounded-full sm:rounded-lg p-1.5 sm:p-4 cursor-pointer">
+                    <div
+                        class="absolute top-3 left-11 [&>*]:border-2 [&>*]:border-gray-100"
+                        hx-get="/inbox/notify/78ceba27-2053-4cb9-8d74-8a34d1b40f4b/"
+                        hx-trigger="load"
+                        hx-target="this"
+                        hx-swap="innerHTML"
+                    ></div>
+                    <img class="w-11 h-11 lg:w-10 lg:h-10 object-cover rounded-full" src="/static/images/avatar_default.svg" alt="User Avatar">
+                    <div class="hidden lg:block font-bold ml-1">john</div>
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <!-- Conversations List -->
-    <ul id="conversations-list" class="flex flex-col gap-1 divide-y mt-2">
-      <!-- List of conversations goes here -->
-    </ul>
-  </div>
-
-  <!-- Conversation Section -->
-  <div
-    id="conversation"
-    class="col-span-4 sm:col-span-3 opacity-0 flex flex-col bg-white rounded-r-2xl pt-10 relative overflow-y-auto"
-    _="on load wait for 5ms then remove .opacity-0"
-  >
+    <!-- Conversation Content -->
     <div
-      class="h-full flex items-center justify-center text-gray-500 -mt-6 text-center p-10"
+        id="conversation"
+        class="col-span-4 sm:col-span-3 opacity-0 flex flex-col bg-white rounded-r-2xl pt-10 relative overflow-y-auto"
+        _="on load wait for 5ms then remove .opacity-0"
     >
-      Select a conversation or create a new message
+        <!-- User Info -->
+        <div class="text-center flex flex-col items-center">
+            <a href="/@john/">
+                <img class="w-24 h-24 rounded-full object-cover mb-4" src="/static/images/avatar_default.svg" alt="John's Avatar">
+            </a>
+            <div class="text-center max-w-md">
+                <h1 class="text-lg">john</h1>
+                <div class="text-gray-400 mb-2 -mt-5 text-sm">@john</div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <ul id="inbox_messages" class="flex flex-col grow gap-6 p-4 sm:p-10">
+            <li>
+                <div class="flex flex-col md:flex-row gap-1 md:gap-6">
+                    <a class="contents" href="/@abubakr/">
+                        <img class="w-14 h-14 object-cover rounded-full" src="https://res.cloudinary.com/dot3mopru/image/upload/v1/media/avatars/3941424_2084579_ptzzp4" alt="Abubaker's Avatar">
+                    </a>
+                    <div class="bg-white p-4 w-full rounded-xl border-2 border-gray-200">
+                        <div class="flex flex-col md:flex-row justify-between text-xs pb-3 text-zinc-500">
+                            <div>
+                                <span class="font-bold text-base text-black mr-1">Abubaker Khaled</span>@abubakr
+                            </div>
+                            <div>Sept. 16, 2024, 1:15 p.m. (0 minutes)</div>
+                        </div>
+                        <div>
+                            <p class="whitespace-pre-wrap">Hi john how are you</p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <!-- Reply Button -->
+        <div class="sticky bottom-0 z-10 px-4 sm:px-10 pt-6 pb-10 flex bg-white">
+            <a
+                class="flex cursor-pointer items-center gap-2 bg-gray-800 hover:bg-indigo-600 text-white rounded-full px-6 pr-8 py-3"
+                hx-get="/inbox/new_reply/78ceba27-2053-4cb9-8d74-8a34d1b40f4b/"
+                hx-target="this"
+                hx-swap="outerHTML scroll:#conversation:bottom"
+            >
+                <img class="h-6" src="https://img.icons8.com/material/96/ffffff/reply-arrow--v1.png" alt="Reply Icon">
+                <div class="text-white rounded-full">Reply</div>
+            </a>
+        </div>
     </div>
-  </div>
-</inbox>
+</div>
 
-<!-- Script to Auto Scroll to the Bottom -->
+<!-- Scroll to Bottom Script -->
 <script>
-  function scrollToBottom() {
-    const container = document.getElementById("conversation");
-    container.scrollTop = container.scrollHeight;
-  }
+    function scrollToBottom() {
+        const container = document.getElementById('conversation');
+        container.scrollTop = container.scrollHeight;
+    }
 
-  window.onload = function () {
-    scrollToBottom();
-  };
+    window.onload = function() {
+        scrollToBottom();
+    };
 </script>
 
 {% endblock content %}
