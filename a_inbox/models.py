@@ -15,7 +15,7 @@ class InboxMessage(models.Model):
         ordering = ['-created_at']
         
     def __str__(self):
-        time_since = timesince(self.created_at, timezone.now)
+        time_since = timesince(self.created_at, timezone.now())
         return f'[{self.sender.username} : {time_since} ago]'
     
 
