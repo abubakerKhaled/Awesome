@@ -21,6 +21,7 @@
         <ul class="flex items-center navitems flex-col md:flex-row gap-8 md:gap-0 justify-center h-full -translate-y-10 md:translate-y-0">
             {% if user.is_authenticated %}
             <li><a href="{% url 'a_posts:home' %}">Home</a></li>
+            <li><a href="{% url 'a_inbox:inbox' %}">Inbox</a></li>
             <li><a href="{% url 'a_posts:create_post' %}">Create Post</a></li>
             <li x-data="{ dropdownOpen: false }" class="relative">
                 <a @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="cursor-pointer select-none">

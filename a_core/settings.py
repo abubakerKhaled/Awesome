@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     # My apps
     "a_posts",
     "a_users",
+    "a_inbox"
 ]
 
 MIDDLEWARE = [
@@ -159,4 +160,4 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_SIGNUP_REDIRECT_URL = "/profile_onboarding/"
 
 
-ACCOUNT_USERNAME_BLACKLIST = ['admin', 'accounts', 'profile', 'category', 'post', 'username', 'theboss']
+ACCOUNT_USERNAME_BLACKLIST = ['admin', 'accounts', 'profile', 'category', 'post', 'username', 'theboss', 'inbox']
