@@ -9,11 +9,10 @@
 
 
         <div 
-        hx-get="{% url 'a_posts:home' %}?page={{ page|add:1 }}"
+        hx-get="{% if tag %}{% url 'a_posts:category' tag.slug %}{% else %}{% url 'a_posts:home' %}{% endif %}?page={{ page|add:1 }}"
         hx-trigger="revealed"
         hx-target="this"
         hx-swap="outerHTML">
-
         </div>
 
 {% endblock content%}
