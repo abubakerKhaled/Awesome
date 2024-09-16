@@ -1,13 +1,17 @@
 <div id='conversation' class="col-span-4 sm:col-span-3 flex flex-col bg-white rounded-r-2xl pt-10 relative overflow-y-auto">
     <!-- Conversation Header -->
     <div class="text-center flex flex-col items-center">
-        <a href="#">
-            <img class="w-24 h-24 rounded-full object-cover mb-4" src="/static/images/avatar_default.svg" alt="User Avatar">
+        {% for participant in conversation.participants.all %}
+        {% if participant != request.user %}
+        <a href="{% url 'a_users:user_profile' participant.username %}">
+            <img class="w-24 h-24 rounded-full object-cover mb-4" src="{{ participant.profile.avatar}}" alt="User Avatar">
         </a>
         <div class="text-center max-w-md">
-            <h1 class="text-lg">john</h1>
-            <div class="text-gray-400 mb-2 -mt-5 text-sm">@john</div>
+            <h1 class="text-lg">{{ participant.profile.name}}</h1>
+            <div class="text-gray-400 mb-2 -mt-5 text-sm">@{{ participant.username }}</div>
         </div>
+        {% endif %}
+        {% endfor %}
     </div>
 
     <!-- Messages List -->

@@ -37,14 +37,8 @@
         </div>
 
         <!-- Conversations List -->
-        <ul id="conversations-list" class="flex flex-col gap-1 divide-y mt-2">
-            <li class="bg-zinc-200 rounded-full sm:rounded-lg relative mt-2 sm:mt-0">
-                <a href="#" class="flex items-center justify-center lg:justify-normal gap-1 hover:bg-zinc-200 rounded-full sm:rounded-lg p-1.5 sm:p-4 cursor-pointer">
-                    <img class="w-11 h-11 lg:w-10 lg:h-10 object-cover rounded-full" src="/static/images/avatar_default.svg" alt="Avatar">
-                    <div class="hidden lg:block font-bold ml-1">john</div>
-                </a>
-            </li>
-        </ul>
+        {% include 'a_inbox/conversations_list.html' %}
+        
     </div>
 
     <!-- Conversation Area -->
