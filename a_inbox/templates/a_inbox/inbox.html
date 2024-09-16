@@ -1,11 +1,12 @@
-{% include 'layouts/d.html' %} {% load static %} 
+{% include 'layouts/d.html' %}
+{% load static %} 
 
 {% block content %}
 
 
-<div class="inbox grid grid-cols-5 sm:grid-cols-4 h-[calc(100vh-8rem)] md:h-[calc(100vh-12rem)] shadow-2xl rounded-2xl mx-1 lg:mx-10 xl:mx-48">
+<inbox class="grid grid-cols-5 sm:grid-cols-4 h-[calc(100vh-8rem)] md:h-[calc(100vh-12rem)] shadow-2xl rounded-2xl mx-1 lg:mx-10 xl:mx-48">
     <!-- Sidebar -->
-    <div x-data="{ modal_open: false }" class="col-span-1 bg-slate-100 rounded-l-2xl p-2 overflow-y-auto">
+    <div x-data="{ modal_open: false }" class="col-span-1 bg-slate-10 rounded-l-2xl p-2 overflow-y-auto">
         <!-- New Message Button -->
         <div class="p-0 sm:p-4 mb-3 sticky top-0 z-10">
             <a @click="modal_open = true" class="flex cursor-pointer items-center justify-center h-14 sm:h-16 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full">
@@ -25,16 +26,7 @@
                             <div id="new-message">
                                 <div class="flex gap-2 items-center">
                                     <span class="font-bold">To:</span>
-                                    <input
-                                        class="p-3 w-screen lg:w-full"
-                                        placeholder="Search user ..."
-                                        type="text"
-                                        name="search_user"
-                                        hx-get="/inbox/search_users/"
-                                        hx-trigger="keyup changed"
-                                        hx-target="#search-results"
-                                        hx-swap="innerHTML"
-                                    >
+                                    <input class="p-3 w-screen lg:full" placeholder="Search user ..." type="text" name="search_user">
                                 </div>
                                 <div id="search-results" class="block h-60 overflow-y-auto"></div>
                             </div>
@@ -47,76 +39,19 @@
         <!-- Conversations List -->
         <ul id="conversations-list" class="flex flex-col gap-1 divide-y mt-2">
             <li class="bg-zinc-200 rounded-full sm:rounded-lg relative mt-2 sm:mt-0">
-                <a href="/inbox/c/78ceba27-2053-4cb9-8d74-8a34d1b40f4b/" class="flex items-center justify-center lg:justify-normal gap-1 hover:bg-zinc-200 rounded-full sm:rounded-lg p-1.5 sm:p-4 cursor-pointer">
-                    <div
-                        class="absolute top-3 left-11 [&>*]:border-2 [&>*]:border-gray-100"
-                        hx-get="/inbox/notify/78ceba27-2053-4cb9-8d74-8a34d1b40f4b/"
-                        hx-trigger="load"
-                        hx-target="this"
-                        hx-swap="innerHTML"
-                    ></div>
-                    <img class="w-11 h-11 lg:w-10 lg:h-10 object-cover rounded-full" src="/static/images/avatar_default.svg" alt="User Avatar">
+                <a href="#" class="flex items-center justify-center lg:justify-normal gap-1 hover:bg-zinc-200 rounded-full sm:rounded-lg p-1.5 sm:p-4 cursor-pointer">
+                    <img class="w-11 h-11 lg:w-10 lg:h-10 object-cover rounded-full" src="/static/images/avatar_default.svg" alt="Avatar">
                     <div class="hidden lg:block font-bold ml-1">john</div>
                 </a>
             </li>
         </ul>
     </div>
 
-    <!-- Conversation Content -->
-    <div
-        id="conversation"
-        class="col-span-4 sm:col-span-3 opacity-0 flex flex-col bg-white rounded-r-2xl pt-10 relative overflow-y-auto"
-        _="on load wait for 5ms then remove .opacity-0"
-    >
-        <!-- User Info -->
-        <div class="text-center flex flex-col items-center">
-            <a href="/@john/">
-                <img class="w-24 h-24 rounded-full object-cover mb-4" src="/static/images/avatar_default.svg" alt="John's Avatar">
-            </a>
-            <div class="text-center max-w-md">
-                <h1 class="text-lg">john</h1>
-                <div class="text-gray-400 mb-2 -mt-5 text-sm">@john</div>
-            </div>
-        </div>
+    <!-- Conversation Area -->
+    {% include 'a_inbox/conversation.html' %}
 
-        <!-- Messages -->
-        <ul id="inbox_messages" class="flex flex-col grow gap-6 p-4 sm:p-10">
-            <li>
-                <div class="flex flex-col md:flex-row gap-1 md:gap-6">
-                    <a class="contents" href="/@abubakr/">
-                        <img class="w-14 h-14 object-cover rounded-full" src="https://res.cloudinary.com/dot3mopru/image/upload/v1/media/avatars/3941424_2084579_ptzzp4" alt="Abubaker's Avatar">
-                    </a>
-                    <div class="bg-white p-4 w-full rounded-xl border-2 border-gray-200">
-                        <div class="flex flex-col md:flex-row justify-between text-xs pb-3 text-zinc-500">
-                            <div>
-                                <span class="font-bold text-base text-black mr-1">Abubaker Khaled</span>@abubakr
-                            </div>
-                            <div>Sept. 16, 2024, 1:15 p.m. (0 minutes)</div>
-                        </div>
-                        <div>
-                            <p class="whitespace-pre-wrap">Hi john how are you</p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
+</inbox>
 
-        <!-- Reply Button -->
-        <div class="sticky bottom-0 z-10 px-4 sm:px-10 pt-6 pb-10 flex bg-white">
-            <a
-                class="flex cursor-pointer items-center gap-2 bg-gray-800 hover:bg-indigo-600 text-white rounded-full px-6 pr-8 py-3"
-                hx-get="/inbox/new_reply/78ceba27-2053-4cb9-8d74-8a34d1b40f4b/"
-                hx-target="this"
-                hx-swap="outerHTML scroll:#conversation:bottom"
-            >
-                <img class="h-6" src="https://img.icons8.com/material/96/ffffff/reply-arrow--v1.png" alt="Reply Icon">
-                <div class="text-white rounded-full">Reply</div>
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- Scroll to Bottom Script -->
 <script>
     function scrollToBottom() {
         const container = document.getElementById('conversation');
@@ -127,5 +62,6 @@
         scrollToBottom();
     };
 </script>
+
 
 {% endblock content %}

@@ -10,4 +10,4 @@ def inbox_view(request):
     context = {
         'conversation': conversation
     }
-    return render(request, 'a_inbox/inbox.html', conversation)
+    return render(request, 'a_inbox/inbox.html', context)
