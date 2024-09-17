@@ -1,0 +1,49 @@
+<wrapper class="block h-[calc(100%-20px)] max-w-2xl mx-auto my-10">
+    <h2>Direct Message</h2>
+    
+    <div id="chat_window" class="flex flex-col h-full bg-gray-800 rounded-2xl shadow-2xl relative p-1">
+        <a href="{% url 'a_users:user_profile' user.username %}">
+            <div class="flex items-center gap-2 p-4 sticky top-0 z-10">
+                <div id="user_online_icon" class="gray-dot absolute top-2 left-2"></div>
+                <img class="w-10 h-10 rounded-full object-cover" src="{{ user.profile.avatar }}" />
+                <div>
+                    <span class="font-bold text-white">{{ user.profile.name }}</span> 
+                    <span class="text-sm font-light text-gray-400">@{{ user.username }}</span>
+                </div>
+            </div>
+        </a>
+        
+        <div id="chat_container" class="overflow-y-auto grow">
+            <ul id="chat_messages" class="flex flex-col justify-end gap-2 p-4">
+                <!-- Chat messages will go here -->
+            </ul>
+        </div>
+        
+        <div class="sticky bottom-0 h-30 z-10 p-2 bg-gray-800">
+            <form id="chat_message_form" method="POST" class="w-full nolabel h-14"
+                hx-ext="ws" 
+                ws-connect="/ws/group/6NaAPmAEvpgZsqdSDzrHr5" 
+                ws-send
+                _="on htmx:wsAfterSend reset() me">
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <div>
+                    <label for="id_body">Body:</label>
+                    <input type="text" name="body" placeholder="Add message ..." class="p-4 text-black" maxlength="300" autofocus id="id_body">
+                </div>
+            </form>
+        </div>
+    </div>
+</wrapper>
+
+<script>
+    function scrollToBottom(time=0) {
+        setTimeout(function() {
+            const container = document.getElementById('chat_container');
+            container.scrollTop = container.scrollHeight;
+        }, time);
+    }
+    scrollToBottom();
+    scrollToBottom(300);
+
+    
+</script>
