@@ -1,0 +1,21 @@
+<div class="flex gap-2 items-center mb-5">
+    <span class="font-bold">To:</span>
+    <div class="flex items-center gap-1">
+        <img class="w-10 h-10 object-cover rounded-full mr-1" src="https://res.cloudinary.com/dot3mopru/image/upload/v1/media/avatars/profile-6_vx6stc">
+        <div class="font-bold">
+            abubaker  
+            <span class="text-xs font-normal text-zinc-500">@abubaker</span>
+            <span class="text-xs font-bold text-red-500 pl-2">User not verified!</span>
+        </div>
+    </div>
+</div>
+
+<div class="mb-5">
+    <form method="POST" action="/inbox/new_message/851">
+        <div>
+            <textarea name="body" cols="40" rows="4" placeholder="Add message ..." maxlength="2000" required="" id="id_body" spellcheck="false"></textarea>
+        </div>
+        <button type="submit" class="mt-1">Submit Message</button>
+        <a @click="modal_open = false" href="https://awesomepixx.com/inbox/" class="button secondaryAction ml-1 cursor-pointer" _="on click reset() the closest <form/>">Cancel</a>
+    </form>
+</div>
