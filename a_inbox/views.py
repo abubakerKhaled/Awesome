@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.db.models import Q
@@ -46,9 +46,41 @@ def search_users(request):
     
 def new_message(request, recipient_id):
     recipient = get_object_or_404(User, id=recipient_id)
-    new_message_form = InboxNewMessageForm()
+    
+    if request.method == 'POST':
+        form = InboxNewMessageForm(request.POST)
+        if form.is_valid():
+            message_body = form.cleaned_data['body']
+            
+            # Check if a conversation already exists
+            conversation = Conversation.objects.filter(
+                participants=request.user
+            ).filter(
+                participants=recipient
+            ).first()
+            
+            if not conversation:
+                conversation = Conversation.objects.create()
+                conversation.participants.add(request.user, recipient)
+            
+            # Create and save the message
+            message = InboxMessage.objects.create(
+                sender=request.user,
+                Conversation=conversation,
+                body=message_body
+            )
+            
+            # Update the conversation using the message's timestamp
+            conversation.lastmessage_created = message.created_at
+            conversation.is_seen = False
+            conversation.save()
+            
+            return redirect('a_inbox:inbox', conversation.id)
+    else:
+        form = InboxNewMessageForm()
+    
     context = {
         'recipient': recipient,
-        'new_message_form': new_message_form,
+        'new_message_form': form,
     }
     return render(request, 'a_inbox/form_new_message.html', context)

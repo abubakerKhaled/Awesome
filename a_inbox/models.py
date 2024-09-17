@@ -7,7 +7,7 @@ import uuid
 
 class InboxMessage(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    conversatino = models.ForeignKey('Conversation', on_delete=models.CASCADE, related_name="messages")
+    Conversation = models.ForeignKey('Conversation', on_delete=models.CASCADE, related_name="messages")
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     
