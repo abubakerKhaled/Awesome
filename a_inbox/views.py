@@ -43,7 +43,7 @@ def search_users(request):
         raise Http404()
     
     
-    
+@login_required
 def new_message(request, recipient_id):
     recipient = get_object_or_404(User, id=recipient_id)
     
@@ -84,3 +84,35 @@ def new_message(request, recipient_id):
         'new_message_form': form,
     }
     return render(request, 'a_inbox/form_new_message.html', context)
+
+
+@login_required
+def new_reply(request, conversation_id):
+    conversation = get_object_or_404(Conversation, id=conversation_id, participants=request.user)
+    
+    if request.method == 'POST':
+        form = InboxNewMessageForm(request.POST)
+        if form.is_valid():
+            message_body = form.cleaned_data['body']
+            
+            # Create and save the message
+            message = InboxMessage.objects.create(
+                sender=request.user,
+                Conversation=conversation,  # Note the capital 'C' to match your model
+                body=message_body
+            )
+            
+            # Update the conversation
+            conversation.lastmessage_created = message.created_at
+            conversation.is_seen = False
+            conversation.save()
+            
+            return redirect('a_inbox:inbox', conversation.id)
+    else:
+        form = InboxNewMessageForm()
+    
+    context = {
+        'new_message_form': form,
+        'conversation': conversation,
+    }
+    return render(request, 'a_inbox/form_newreply.html', context)
