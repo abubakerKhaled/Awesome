@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.db.models import Q
 from .models import *
+from .forms import *
 from a_users.models import Profile
 
 
@@ -21,6 +22,8 @@ def inbox_view(request, conversation_id=None):
     }
     return render(request, 'a_inbox/inbox.html', context)
 
+
+
 def search_users(request):
     letters = request.GET.get('search_user')
     if request.htmx:
@@ -38,3 +41,14 @@ def search_users(request):
             return HttpResponse('')
     else:
         raise Http404()
+    
+    
+    
+def new_message(request, recipient_id):
+    recipient = get_object_or_404(User, id=recipient_id)
+    new_message_form = InboxNewMessageForm()
+    context = {
+        'recipient': recipient,
+        'new_message_form': new_message_form,
+    }
+    return render(request, 'a_inbox/form_new_message.html', context)
