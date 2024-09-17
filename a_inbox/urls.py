@@ -8,5 +8,6 @@ urlpatterns = [
     path('', inbox_view, name='inbox'),
     path('conversation/<uuid:conversation_id>', inbox_view, name='inbox'),
     path('search_users/', search_users, name='search_users'),
+    path('new_message/<recipient_id>', new_message, name='inbox_new_message'),
 ]
 
