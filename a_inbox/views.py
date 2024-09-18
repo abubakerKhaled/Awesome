@@ -109,6 +109,14 @@ def new_reply(request, conversation_id):
         if form.is_valid():
             message_body = form.cleaned_data['body']
             
+            # encrypt message
+            message_body = form.cleaned_data['body']
+            message_bytes = message_body.encode('utf-8')
+            message_encrypted = f.encrypt(message_bytes)
+            message_decoded = message_encrypted.decode('utf-8')
+            
+            message_body = message_decoded
+            
             # Create and save the message
             message = InboxMessage.objects.create(
                 sender=request.user,
