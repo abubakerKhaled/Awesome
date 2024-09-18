@@ -2,10 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.db.models import Q
+from django.conf import settings
+from cryptography.fernet import Fernet
 from .models import *
 from .forms import *
 from a_users.models import Profile
 
+f = Fernet(settings.ENCRYPT_KEY)
 
 @login_required
 def inbox_view(request, conversation_id=None):
@@ -54,7 +57,14 @@ def new_message(request, recipient_id):
     if request.method == 'POST':
         form = InboxNewMessageForm(request.POST)
         if form.is_valid():
+            
+            # encrypt message
             message_body = form.cleaned_data['body']
+            message_bytes = message_body.encode('utf-8')
+            message_encrypted = f.encrypt(message_bytes)
+            message_decoded = message_encrypted.decode('utf-8')
+            
+            message_body = message_decoded
             
             # Check if a conversation already exists
             conversation = Conversation.objects.filter(
