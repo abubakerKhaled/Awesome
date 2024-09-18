@@ -127,3 +127,12 @@ def notify_newmessage(request, conversation_id):
     if conversation.is_seen == False and latest_message.sender != request.user:
         return render(request, 'a_inbox/notify_icon.html')
     return HttpResponse('')
+
+
+def notify_inbox(request):
+    my_conversations = Conversation.objects.filter(participants=request.user, is_seen=False)
+    for conv in my_conversations:
+        latest_message = conv.messages.first()
+        if latest_message.sender != request.user:
+            return render(request, 'a_inbox/notify_icon.html')
+    return HttpResponse('')

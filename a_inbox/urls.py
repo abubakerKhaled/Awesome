@@ -11,5 +11,6 @@ urlpatterns = [
     path('new_message/<recipient_id>', new_message, name='inbox_new_message'),
     path('new_reply/<conversation_id>', new_reply, name='inbox_newreply'),
     path('notify/<conversation_id>', notify_newmessage, name='notify_newmessage'),
+    path('notify/inbox/', notify_inbox, name='notify_inbox'),
 ]
 
